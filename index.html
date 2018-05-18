@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="https://code.jquery.com/jquery-3.3.1.min.js"></script>
+    <script src="https://code.highcharts.com/maps/highmaps.js"></script>
+    <script src="https://code.highcharts.com/mapdata/custom/world-highres.js"></script>
+    <script>
+      function draw_chart() {
+        map = Highcharts.Map("map", {
+          chart: {
+            backgroundColor: "#eee"
+          },
+          title: {
+            text: "Failed SSH Logins"
+          },
+          series: [{
+            name: "Failed logins",
+            mapData: Highcharts.maps['custom/world-highres'],
+            data: countrys
+          }],
+          colorAxis: {
+            minColor: '#F2E6E9',
+            maxColor: '#B3002A',
+            type: 'logarithmic'
+          },
+          legend: {
+            enabled: true
+          }
+        });
+      };
+      function load_data() {
+        $.ajax({
+          url: "data.txt", success: function(data){
+            countrys = [];
+            var lines = data.split("\n")
+            for (var i = 0; i < lines.length; i++){
+              var items = lines[i].split(" = ");
+              countrys.push([items[0],parseInt(items[1])]);
+            }
+            draw_chart();
+          }
+        });
+      };
+      $(document).ready(function() {
+        load_data();
+      });
+    </script>
+    <style>
+      #map {
+        position: absolute;
+        left: 0; right: 0;
+        top: 0; bottom: 0;
+        margin: auto;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="map"></div>
+  </body>
+</html>
